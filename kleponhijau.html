@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klepon Hijau</title>
+    <style>
+        body{
+            background-image: url('fireworks.jpg');
+            background-repeat: no-repeat;
+            background-size: 100%;
+            position: fixed;
+            background-color: rgb(250, 196, 196);
+        }
+        p{
+            text-align: center;
+            font-size: 2em;
+            padding: 0%;
+            color:rgb(255, 255, 255);
+            margin-top: 100px;
+            margin-left: 160px;
+            
+        }
+        .jam{
+            
+            width: 1000px;
+            text-align: center;
+            color: black;
+            font-size: 1em;
+            margin-left: 175px;
+            
+        }
+
+        .jam > span{
+            padding: 10px;
+            border-radius: 10px;
+            background-color: cornsilk;
+            
+        }
+
+        .jam > span > span{
+            padding: 5px;
+            border-radius: 10px;
+            background-color:lightcoral;
+        }
+
+        input{
+            height: 50px;
+            padding: 15px;
+            margin-left: 510px;
+            margin-bottom: 55px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <p><b>We're Getting Ready</p>
+    <div>
+        <input type="tanggal" name="endDate">
+        <div class="jam">
+            <span>
+                <span class="days">0</span> Days 
+            </span>
+            <span>
+                <span class="hours">0</span> hours 
+            </span>
+            <span>
+                <span class="minutes">0</span> minutes 
+            </span>
+            <span>
+                <span class="seconds">0</span> seconds 
+            </span>
+        </div>
+        <script>
+            const endDate = document.querySelector("input[name='endDate']");
+            const jam = document.querySelector(".jam");
+            let timeInterval;
+            let timeStop = true;
+            const savedValue = localStorage.getItem("Count Down")||false ;
+            if(savedValue){
+                start(savedValue);
+                let inputvalue = new Date(savedValue);
+                endDate.valueAsDate = inputvalue;
+            }
+            endDate.addEventListener("change",function(e){
+                e.preventDefault();
+                clearInterval(timeInterval);
+                const temp = new Date(endDate.value);
+                localStorage.setItem("count down",temp);
+                start(temp);
+                timeStop= true;
+            })
+
+            function start(d){
+                function update(){
+                    let tl = (timeLeft(d));
+                    if(tl.total <=0){
+                        timeStop = false;
+                    }
+                    for(let pro in tl){
+                        let el = jam.querySelector("."+pro);
+                        if(el){
+                            el.innerHTML = tl[pro];
+                        }
+                    }
+                }
+                update();
+                if(timeStop){
+                    timeInterval= setInterval(update,1000);
+                }
+                else{
+                    clearInterval(timeInterval);
+                }
+            }
+
+            function timeLeft(d){
+                let current = new Date();
+                let t = Date.parse(d) - Date.parse(current);
+                let seconds = Math.floor((t/1000)%60);
+                let minutes = Math.floor((t/1000/60)%60);
+                let hours = Math.floor((t/(1000*60*60))%24);
+                let days = Math.floor((t/1000*60*60*24));
+                return{
+                    "total":t,"days":days,"hours":hours,"minutes":minutes,"seconds":seconds
+                };
+            }
+        </script>
+    </div>  
+</body>
+</html>
